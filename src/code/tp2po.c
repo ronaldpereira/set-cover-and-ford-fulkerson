@@ -42,10 +42,9 @@ void inputReader(FILE *input, double ***m, int dimx, int dimy)
     }
 }
 
-double **matrixReader(char *location, int *dimx, int *dimy)
+void matrixReader(char *location, double ***m, int *dimx, int *dimy)
 {
     FILE *input;
-    double **m;
 
     input = fopen(location, "r");
 
@@ -53,13 +52,11 @@ double **matrixReader(char *location, int *dimx, int *dimy)
 
     (*dimx)++;
 
-    matrixAlocation(&m, *dimx, *dimy);
+    matrixAlocation(m, *dimx, *dimy);
 
-    inputReader(input, &m, *dimx, *dimy);
+    inputReader(input, m, *dimx, *dimy);
 
     fclose(input);
-
-    return m;
 }
 
 int main(int argc, char *argv[])
@@ -67,7 +64,7 @@ int main(int argc, char *argv[])
     double **m;
     int dimx, dimy;
 
-    m = matrixReader(argv[1], &dimx, &dimy);
+    matrixReader(argv[1], &m, &dimx, &dimy);
 
     matrixPrinter(m, dimx, dimy);
 
