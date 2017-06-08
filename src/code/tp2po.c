@@ -11,7 +11,7 @@ void matrixPrinter(double **m, int dimx, int dimy)
     {
         for(j = 0; j < dimy; j++)
         {
-            printf("%.3lf ", m[i][i]);
+            printf("%.6lf ", m[i][j]);
         }
         printf("\n");
     }
@@ -26,6 +26,22 @@ void matrixAlocation(double ***m, int dimx, int dimy)
         (*m)[i] = (double*) calloc(dimy,sizeof(double));
 }
 
+void inputReader(FILE *input, double ***m, int dimx, int dimy)
+{
+    int i, j;
+
+    for(j = 0; j < dimy; j++)
+        fscanf(input, "%lf ", &((*m)[0][j]));
+
+    for(i = 1; i < dimx; i++)
+    {
+        for(j = 0; j < dimy; j++)
+        {
+            fscanf(input, "%lf ", &((*m)[i][j]));
+        }
+    }
+}
+
 double **matrixReader(char *location, int *dimx, int *dimy)
 {
     FILE *input;
@@ -35,7 +51,11 @@ double **matrixReader(char *location, int *dimx, int *dimy)
 
     fscanf(input, "%d %d ", dimx, dimy);
 
+    (*dimx)++;
+
     matrixAlocation(&m, *dimx, *dimy);
+
+    inputReader(input, &m, *dimx, *dimy);
 
     fclose(input);
 
@@ -44,12 +64,12 @@ double **matrixReader(char *location, int *dimx, int *dimy)
 
 int main(int argc, char *argv[])
 {
-    double **n;
+    double **m;
     int dimx, dimy;
 
-    n = matrixReader(argv[1], &dimx, &dimy);
+    m = matrixReader(argv[1], &dimx, &dimy);
 
-    matrixPrinter(n, dimx, dimy);
+    matrixPrinter(m, dimx, dimy);
 
     return 0;
 }
