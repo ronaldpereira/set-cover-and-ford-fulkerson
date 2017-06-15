@@ -5,6 +5,41 @@
 #include <limits.h>
 #include <time.h>
 
+void matrixAlocation(double ***m, int dimx, int dimy)
+{
+    int i;
+
+    (*m) = (double**) calloc(dimx,sizeof(double));
+    for(i = 0; i < dimx; i++)
+    (*m)[i] = (double*) calloc(dimy,sizeof(double));
+}
+
+void inputReader(FILE *input, double ***m, int dimx, int dimy)
+{
+    int i, j;
+    
+    for(i = 0; i < dimx; i++)
+    for(j = 0; j < dimy; j++)
+    fscanf(input, "%lf ", &((*m)[i][j]));
+}
+
+void matrixReader(char *location, double ***m, int *dimx, int *dimy)
+{
+    FILE *input;
+
+    input = fopen(location, "r");
+
+    fscanf(input, "%d %d ", dimx, dimy);
+
+    (*dimx)++;
+
+    matrixAlocation(m, *dimx, *dimy);
+
+    inputReader(input, m, *dimx, *dimy);
+
+    fclose(input);
+}
+
 void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
 {
     int i;
@@ -45,41 +80,6 @@ void printFinalWeight(FILE *output, int *y, double **m, int dimy)
     }
 
     fprintf(output, "Cover Cost = %.3lf\n", sum);
-}
-
-void matrixAlocation(double ***m, int dimx, int dimy)
-{
-    int i;
-
-    (*m) = (double**) calloc(dimx,sizeof(double));
-    for(i = 0; i < dimx; i++)
-        (*m)[i] = (double*) calloc(dimy,sizeof(double));
-}
-
-void inputReader(FILE *input, double ***m, int dimx, int dimy)
-{
-    int i, j;
-
-    for(i = 0; i < dimx; i++)
-        for(j = 0; j < dimy; j++)
-            fscanf(input, "%lf ", &((*m)[i][j]));
-}
-
-void matrixReader(char *location, double ***m, int *dimx, int *dimy)
-{
-    FILE *input;
-
-    input = fopen(location, "r");
-
-    fscanf(input, "%d %d ", dimx, dimy);
-
-    (*dimx)++;
-
-    matrixAlocation(m, *dimx, *dimy);
-
-    inputReader(input, m, *dimx, *dimy);
-
-    fclose(input);
 }
 
 int uncoveredCounter(bool *covered, int numVertex)
