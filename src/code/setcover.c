@@ -29,6 +29,7 @@ void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
         else
             fprintf(output, ")");
     }
+
     fprintf(output, "\n\n");
 }
 
@@ -169,9 +170,7 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
             }
 
             else if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) == minVertexWeight)
-            {
                 indexCover = getMajorCover(m, dimx, indexCover, j);
-            }
         }
     }
 
