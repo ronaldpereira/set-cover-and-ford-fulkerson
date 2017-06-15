@@ -108,14 +108,14 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
             {
                 minVertexWeight = m[0][j];
                 indexCover = j;
-                printf("%.3lf && %d\n", minVertexWeight, indexCover);
+                printf("minVertexWeight = %.3lf && indexCover = %d\n", minVertexWeight, indexCover);
             }
 
             // TODO else if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) == minVertexWeight) Pegar o cover com maior abrangencia
-
-
         }
     }
+
+
 }
 
 void setCover(double ***m, int dimx, int dimy)
