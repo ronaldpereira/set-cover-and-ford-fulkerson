@@ -5,48 +5,34 @@
 #include <limits.h>
 #include <time.h>
 
-void matrixPrinter(double **m, int dimx, int dimy)
-{
-    int i, j;
-
-    for(i = 0; i < dimx; i++)
-    {
-        for(j = 0; j < dimy; j++)
-        {
-            printf("%.6lf ", m[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-void printResults(double *x, int *y, int numVertex, int dimy)
+void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
 {
     int i;
 
-    printf("\nX = (");
+    fprintf(output, "X = (");
     for(i = 0; i < numVertex; i++)
     {
-        printf("%.3lf", x[i]);
+        fprintf(output, "%.3lf", x[i]);
         if(i < numVertex-1)
-            printf(" ");
+            fprintf(output, " ");
         else
-            printf(")");
+            fprintf(output, ")");
     }
 
-    printf("\nY = (");
+    fprintf(output, "\nY = (");
 
     for(i = 0; i < dimy; i++)
     {
-        printf("%d", y[i]);
+        fprintf(output, "%d", y[i]);
         if(i < dimy-1)
-            printf(" ");
+            fprintf(output, " ");
         else
-            printf(")");
+            fprintf(output, ")");
     }
-    printf("\n");
+    fprintf(output, "\n\n");
 }
 
-void printFinalWeight(int *y, double **m, int dimy)
+void printFinalWeight(FILE *output, int *y, double **m, int dimy)
 {
     int i;
     double sum = 0;
@@ -57,7 +43,7 @@ void printFinalWeight(int *y, double **m, int dimy)
             sum += m[0][i];
     }
 
-    printf("Cover Cost = %.3lf\n", sum);
+    fprintf(output, "Cover Cost = %.3lf\n", sum);
 }
 
 void matrixAlocation(double ***m, int dimx, int dimy)
@@ -74,12 +60,8 @@ void inputReader(FILE *input, double ***m, int dimx, int dimy)
     int i, j;
 
     for(i = 0; i < dimx; i++)
-    {
         for(j = 0; j < dimy; j++)
-        {
             fscanf(input, "%lf ", &((*m)[i][j]));
-        }
-    }
 }
 
 void matrixReader(char *location, double ***m, int *dimx, int *dimy)
@@ -104,14 +86,11 @@ int uncoveredCounter(bool *covered, int numVertex)
     int i;
     int uncoveredCounter = 0;
 
-    printf("\nuncovered ");
     for(i = 0; i < numVertex; i++)
     {
-        printf("%d ", covered[i]);
         if(!(covered[i]))
             uncoveredCounter++;
     }
-    printf("\n");
 
     return uncoveredCounter;
 }
@@ -121,11 +100,8 @@ int getRandomVertex(bool *covered, int numVertex)
     int i;
     int uncovered = uncoveredCounter(covered, numVertex);
 
-    printf("uncovered = %d\n", uncovered);
-
     srand(time(NULL));
     int random = rand() % uncovered;
-    printf("\nRandom = %d\n", random);
 
     for(i = 0; i < numVertex; i++)
     {
@@ -190,7 +166,6 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
             {
                 minVertexWeight = m[0][j];
                 indexCover = j;
-                printf("minVertexWeight = %.3lf && indexCover = %d\n", minVertexWeight, indexCover);
             }
 
             else if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) == minVertexWeight)
@@ -210,12 +185,15 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
     }
 }
 
-void setCover(double ***m, int dimx, int dimy)
+void setCover(char *outputFilePath, double ***m, int dimx, int dimy)
 {
+    FILE *output;
     bool *covered;
     int numVertex = dimx-1, indexVertex;
     double *x;
     int *y;
+
+    output = fopen(outputFilePath, "w");
 
     covered = (bool*) calloc(numVertex,sizeof(bool));
     x = (double*) calloc(numVertex,sizeof(double));
@@ -224,15 +202,16 @@ void setCover(double ***m, int dimx, int dimy)
     while(uncoveredCounter(covered, numVertex) > 0)
     {
         indexVertex = getRandomVertex(covered, numVertex);
-        printf("indexVertex = %d\n", indexVertex);
         covered[indexVertex] = true;
 
         maximizeIndex(&covered, &x, &y, *m, dimx, dimy, indexVertex);
 
-        printResults(x, y, numVertex, dimy);
+        printResults(output, x, y, numVertex, dimy);
     }
 
-    printFinalWeight(y, *m, dimy);
+    printFinalWeight(output, y, *m, dimy);
+
+    fclose(output);
 }
 
 int main(int argc, char *argv[])
@@ -242,9 +221,7 @@ int main(int argc, char *argv[])
 
     matrixReader(argv[1], &m, &dimx, &dimy);
 
-    matrixPrinter(m, dimx, dimy);
-
-    setCover(&m, dimx, dimy);
+    setCover(argv[2], &m, dimx, dimy);
 
     return 0;
 }
