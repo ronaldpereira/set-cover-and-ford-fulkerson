@@ -1,11 +1,15 @@
 all:
-	gcc -Wall -Wextra -g tp2po.c -lm -o tp2po.exe
+	gcc -Wall -Wextra -g setcover.c -lm -o setcover.exe
 
 run:
-	./tp2po.exe ../test/input.txt ../test/output.txt
+	./setcover.exe ../test/input.txt ../test/output.txt
 
 clean:
 	rm -rf *.exe
 
 test:
 	make all && make run && make clean
+
+gdb:
+	make all && gdb setcover.exe
+	# run ../test/input.txt ../test/output.txt

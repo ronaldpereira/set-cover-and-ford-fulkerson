@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+#include <stdbool.h>
+#include <time.h>
 
 void matrixPrinter(double **m, int dimx, int dimy)
 {
@@ -30,10 +31,7 @@ void inputReader(FILE *input, double ***m, int dimx, int dimy)
 {
     int i, j;
 
-    for(j = 0; j < dimy; j++)
-        fscanf(input, "%lf ", &((*m)[0][j]));
-
-    for(i = 1; i < dimx; i++)
+    for(i = 0; i < dimx; i++)
     {
         for(j = 0; j < dimy; j++)
         {
@@ -59,6 +57,43 @@ void matrixReader(char *location, double ***m, int *dimx, int *dimy)
     fclose(input);
 }
 
+int getRandomVertex(bool *covered, int uncoveredCounter, int numVertex)
+{
+    int i;
+
+    srand(time(NULL));
+    int random = rand() % uncoveredCounter;
+    printf("\nRandom = %d\n", random);
+
+    for(i = 0; i < numVertex; i++)
+    {
+        if(!(covered[i]))
+        {
+            if(random == 0)
+                return i;
+            else
+                random--;
+        }
+    }
+    return -1;
+}
+
+void setCover(double ***m, int dimx, int dimy)
+{
+    bool *covered;
+    int numVertex = dimx-1, indexVertex, uncoveredCounter = numVertex;
+
+    covered = (bool*) calloc(numVertex,sizeof(bool));
+
+    while(uncoveredCounter > 0)
+    {
+        indexVertex = getRandomVertex(covered, uncoveredCounter, numVertex);
+        printf("indexVertex = %d\n", indexVertex);
+        covered[indexVertex] = true;
+        uncoveredCounter--;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     double **m;
@@ -67,6 +102,8 @@ int main(int argc, char *argv[])
     matrixReader(argv[1], &m, &dimx, &dimy);
 
     matrixPrinter(m, dimx, dimy);
+
+    setCover(&m, dimx, dimy);
 
     return 0;
 }
