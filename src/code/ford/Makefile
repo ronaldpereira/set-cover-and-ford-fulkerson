@@ -9,3 +9,7 @@ clean:
 
 test:
 	make all && make run && make clean
+
+gdb:
+	make all && gdb ford.exe
+	#run ../../tests/testford/input.txt ../../tests/testford/output.txt

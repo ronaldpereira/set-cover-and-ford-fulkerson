@@ -9,9 +9,9 @@ void matrixAlocation(double ***m, int dimx, int dimy)
 {
     int i;
 
-    (*m) = (double**) calloc(dimx,sizeof(double));
+    (*m) = (double**) calloc(dimx,sizeof(double*));
     for(i = 0; i < dimx; i++)
-    (*m)[i] = (double*) calloc(dimy,sizeof(double));
+        (*m)[i] = (double*) calloc(dimy,sizeof(double*));
 }
 
 void inputReader(FILE *input, double ***m, int dimx, int dimy)
@@ -19,8 +19,8 @@ void inputReader(FILE *input, double ***m, int dimx, int dimy)
     int i, j;
 
     for(i = 0; i < dimx; i++)
-    for(j = 0; j < dimy; j++)
-    fscanf(input, "%lf ", &((*m)[i][j]));
+        for(j = 0; j < dimy; j++)
+            fscanf(input, "%lf ", &((*m)[i][j]));
 }
 
 void matrixReader(char *location, double ***m, int *dimx, int *dimy)
