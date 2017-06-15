@@ -17,7 +17,7 @@ void matrixAlocation(double ***m, int dimx, int dimy)
 void inputReader(FILE *input, double ***m, int dimx, int dimy)
 {
     int i, j;
-    
+
     for(i = 0; i < dimx; i++)
     for(j = 0; j < dimy; j++)
     fscanf(input, "%lf ", &((*m)[i][j]));
