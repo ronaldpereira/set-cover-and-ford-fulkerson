@@ -2,7 +2,7 @@ all:
 	gcc -Wall -Wextra -g ford.c -o ford.exe
 
 run:
-	./ford.exe ../../test/testford/input.txt ../../test/testford/output.txt
+	./ford.exe ../../tests/testford/input.txt ../../tests/testford/output.txt
 
 clean:
 	rm -rf *.exe
