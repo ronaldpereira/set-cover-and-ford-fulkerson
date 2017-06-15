@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 #include <time.h>
 
 void matrixPrinter(double **m, int dimx, int dimy)
@@ -75,21 +76,67 @@ int getRandomVertex(bool *covered, int uncoveredCounter, int numVertex)
                 random--;
         }
     }
+
     return -1;
+}
+
+double getMaxValueOfVertex(double *x, double **m, int dimx, int indexVertex, int indexCover)
+{
+    int j;
+    double sum = 0;
+
+    for(j = 0; j < dimx; j++)
+    {
+        if(m[indexVertex+1][j] == 1)
+            sum += x[j];
+    }
+
+    return (m[0][indexCover] - sum);
+}
+
+void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, int dimy, int indexVertex)
+{
+    int j;
+    double minVertexWeight = INT_MAX;
+    int indexCover;
+
+    for(j = 0; j < dimy; j++)
+    {
+        if(m[indexVertex+1][j] == 1)
+        {
+            if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) < minVertexWeight)
+            {
+                minVertexWeight = m[0][j];
+                indexCover = j;
+                printf("%.3lf && %d\n", minVertexWeight, indexCover);
+            }
+
+            // TODO else if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) == minVertexWeight) Pegar o cover com maior abrangencia
+
+
+        }
+    }
 }
 
 void setCover(double ***m, int dimx, int dimy)
 {
     bool *covered;
-    int numVertex = dimx-1, indexVertex, uncoveredCounter = numVertex;
+    int numVertex = dimx-1, uncoveredCounter = numVertex, indexVertex;
+    double *x;
+    int *y;
 
     covered = (bool*) calloc(numVertex,sizeof(bool));
+    x = (double*) calloc(numVertex,sizeof(double));
+    y = (int*) calloc(dimy,sizeof(int));
 
     while(uncoveredCounter > 0)
     {
         indexVertex = getRandomVertex(covered, uncoveredCounter, numVertex);
         printf("indexVertex = %d\n", indexVertex);
         covered[indexVertex] = true;
+
+        maximizeIndex(&covered, &x, &y, *m, dimx, dimy, indexVertex);
+
         uncoveredCounter--;
     }
 }
