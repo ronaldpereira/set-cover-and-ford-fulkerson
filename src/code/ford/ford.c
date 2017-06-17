@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
-void graphTester(int **m, int numVertex)
+void graphTester(double **m, int numVertex)
 {
     int i, j;
 
@@ -12,13 +13,13 @@ void graphTester(int **m, int numVertex)
         for(j = 0; j < numVertex; j++)
         {
             if(m[i][j] > 0)
-                printf("[%d -- %d --> %d] ", i, m[i][j], j);
+                printf("[%d -- %.3lf --> %d] ", i, m[i][j], j);
         }
         printf("\n");
     }
 }
 
-void matrixPrinter(int **m, double *capacity, int numVertex, int numPipes)
+void matrixPrinter(double **m, double *capacity, int numVertex, int numPipes)
 {
     int i, j;
 
@@ -32,22 +33,22 @@ void matrixPrinter(int **m, double *capacity, int numVertex, int numPipes)
     {
         for(j = 0; j < numVertex; j++)
         {
-            printf("%d ",m[i][j]);
+            printf("%.3lf ",m[i][j]);
         }
         printf("\n");
     }
 }
 
-void matrixAlocation(int ***m, int numVertex)
+void matrixAlocation(double ***m, int numVertex)
 {
     int i;
 
-    (*m) = (int**) calloc(numVertex,sizeof(int*));
+    (*m) = (double**) calloc(numVertex,sizeof(double*));
     for(i = 0; i < numVertex; i++)
-        (*m)[i] = (int*) calloc(numVertex,sizeof(int*));
+        (*m)[i] = (double*) calloc(numVertex,sizeof(double*));
 }
 
-void inputReader(FILE *input, int ***m, double **capacity, int numVertex, int numPipes)
+void inputReader(FILE *input, double ***m, double **capacity, int numVertex, int numPipes)
 {
     int i, j;
 
@@ -56,10 +57,10 @@ void inputReader(FILE *input, int ***m, double **capacity, int numVertex, int nu
 
     for(i = 0; i < numVertex; i++)
         for(j = 0; j < numVertex; j++)
-            fscanf(input, "%d ", &((*m)[i][j]));
+            fscanf(input, "%lf ", &((*m)[i][j]));
 }
 
-void matrixReader(char *location, int ***m, double **capacity, int *numVertex, int *numPipes)
+void matrixReader(char *location, double ***m, double **capacity, int *numVertex, int *numPipes)
 {
     FILE *input;
 
@@ -78,8 +79,8 @@ void matrixReader(char *location, int ***m, double **capacity, int *numVertex, i
 
 int main(int argc, char *argv[])
 {
-    int **m, numVertex, numPipes;
-    double *capacity;
+    int numVertex, numPipes;
+    double **m, *capacity;
 
     matrixReader(argv[1], &m, &capacity, &numVertex, &numPipes);
 
