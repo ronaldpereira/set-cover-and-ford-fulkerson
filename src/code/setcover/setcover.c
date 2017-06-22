@@ -89,9 +89,11 @@ int uncoveredCounter(bool *covered, int numVertex)
 
     for(i = 0; i < numVertex; i++)
     {
+        printf("%d ", covered[i]);
         if(!(covered[i]))
             uncoveredCounter++;
     }
+    printf("\n");
 
     return uncoveredCounter;
 }
@@ -165,7 +167,7 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
         {
             if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) < minVertexWeight)
             {
-                minVertexWeight = m[0][j];
+                minVertexWeight = getMaxValueOfVertex(*x, m, dimx, indexVertex, j);
                 indexCover = j;
             }
 

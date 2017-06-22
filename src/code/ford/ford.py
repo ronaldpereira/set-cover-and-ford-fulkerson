@@ -1,61 +1,86 @@
 import sys
 
 class reader:
-    # Get the number of vertex and number of pipes from input
+    # Get the number of vertex and number of edges from input
     def readDimensions(input):
         vertex = int(input.readline())
-        pipes = int(input.readline())
-        return vertex,pipes
+        edges = int(input.readline())
+        return vertex,edges
 
-    # Get the cost vector from input
-    def readCost(input):
-        cost = input.readline().split()
-        cost = [float(index) for index in cost] # Converts each string into a float value
-        return cost
+    # Get the capacity vector from input
+    def readCapacity(input):
+        capacity = input.readline().split()
+        capacity = [int(index) for index in capacity] # Converts each string into a int value
+        return capacity
 
     # Get the graph from input
-    def readGraph(input):
+    def readIncidenceMatrix(input):
         graph = [line.split() for line in input]
         i = 0
         for line in graph:
             j = 0
             for index in line:
-                graph[i][j] = float(index) # Converts each string into a float value
+                graph[i][j] = int(index) # Converts each string into a int value
                 j+=1
             i+=1
         return graph
 
     def readInput(input):
-        vertex, pipes = reader.readDimensions(input)
-        cost = reader.readCost(input)
-        graph = reader.readGraph(input)
-        return vertex, pipes, cost, graph
+        vertex, edges = reader.readDimensions(input)
+        capacity = reader.readCapacity(input)
+        graph = reader.readIncidenceMatrix(input)
+        return vertex, edges, capacity, graph
 
 class Ford:
-    def __init__(self, graph):
-        self.graph = graph # Store the graph into the object
-        self.dimx = len(graph) # Number of rows in graph
-        self.dimy = len(graph[0]) # Number of columns in graph
+    def __init__(self, capacity, incidenceMatrix):
+        self.capacity = capacity # Stores the original capacity
+        self.incidenceMatrix = incidenceMatrix # Stores the incidence matrix
+        self.graph = self.incidenceMatrixToGraph() # Stores the graph into the object
+        self.flowGraph = self.incidenceMatrixToGraph() # Stores the final residual capacity graph
+        self.dimx = len(self.graph) # Number of rows in graph
+        self.dimy = len(self.graph[0]) # Number of columns in graph
         self.source = 0 # The source will be always the first vertice
         self.sink = self.dimx-1 # The sink will be always the last vertice
-        self.path = [0] * self.dimx # Stores the actual path (auxiliar to BFS)
+        self.parent = [0] * self.dimx # Stores the parents of the actual vertice (auxiliar to DFS)
+        self.actualFlow = [0] * len(self.incidenceMatrix[0]) # Stores the actual flow of the edges
+        self.stCut = [0] * len(self.incidenceMatrix[0]) # Stores the minimum st-cut
 
-    def breadthFirstSearch(self): # Do a BFS search in the actual flow graph
+    def incidenceMatrixToGraph(self):
+        graph = [[0 for i in range(len(self.incidenceMatrix))]for j in range(len(self.incidenceMatrix))] # Creates a adjacency matrix numVertex X numVertex
+
+        # If we detect a directed edge going from i to k, we find which vertice is k and add the capacity of the edge to the adjacency matrix
+        for i in range(len(self.incidenceMatrix)):
+            for j in range(len(self.incidenceMatrix[0])):
+                if self.incidenceMatrix[i][j] == -1:
+                    for k in range(len(self.incidenceMatrix)):
+                        if self.incidenceMatrix[k][j] == 1:
+                            graph[i][k] = capacity[j]
+
+        return graph
+
+    def addActualFlow(self, s, t, pathFlow, path):
+        for column in range(len(self.incidenceMatrix[0])):
+            if abs(self.incidenceMatrix[s][column]) == 1 and abs(self.incidenceMatrix[t][column] == 1): # If it is -1 or 1
+                self.actualFlow[column] += pathFlow
+                path[column] = 1
+        return path
+
+    def depthFirstSearch(self): # Do a DFS search in the actual flow graph
         visited = [False] * self.dimx # All vertices is not visited
-        bfsQueue = [] # Create a queue for BFS
+        dfsStack = [] # Create a stack for DFS
 
         visited[self.source] = True # Mark the source as visited
-        bfsQueue.append(self.source) # Insert the source into the bfsQueue
+        dfsStack.append(self.source) # Insert the source into the dfsStack
 
-        while bfsQueue: # While the bfsQueue isn't empty
-            actualVertice = bfsQueue.pop(0) # Pop a vertice from bfsQueue
+        while dfsStack: # While the dfsStack isn't empty
+            actualVertice = dfsStack.pop(-1) # Pop a vertice from dfsStack
 
             # Get all adjacent vertices of the actualVertice
             for index, value in enumerate(self.graph[actualVertice]):
-                if visited[index] == False and value > 0: # If an adjacent vertice has not been visited yet, mark it visited and append it to the bfsQueue. Then, add the actualVertice to the path list
+                if visited[index] == False and value > 0: # If an adjacent vertice has not been visited yet, mark it visited and append it to the dfsStack. Then, add the adjacent vertex to the parent list
                     visited[index] = True
-                    bfsQueue.append(index)
-                    self.path[index] = actualVertice
+                    dfsStack.append(index)
+                    self.parent[index] = actualVertice
 
         # If we got to the sink vertice, starting from the source
         if visited[self.sink]:
@@ -63,14 +88,82 @@ class Ford:
         else:
             return False # Path is not valid
 
-    def FordFulkerson(self): # Returns the maximum flow from self.source to self.sink
-        pass
+    def FordFulkerson(self, output): # Returns the maximum flow from self.source to self.sink
+        maxFlow = 0 # Initially, no flow on the graph
 
+        # Increments the maxFlow while there is a valid path from self.source to self.sink
+        while self.depthFirstSearch():
+            pathFlow = float('Inf') # Make the path flow equals to infinite
+            path = [0] * len(self.incidenceMatrix[0]) # Stores the actual valid path
+
+            actual = self.sink # Initialize the actual vertice in the sink
+            # path[actual] = 1 # The sink will be always in a valid path
+            while(actual != self.source):
+                pathFlow = min(pathFlow, self.graph[self.parent[actual]][actual]) # Get the minimum flow between the actual path flow and the flow of the actual edge
+                actual = self.parent[actual] # Make the actual vertice equal to the previous vertice on the DFS actual path
+                # path[actual] = 1 # Stores the actual path
+
+            # Adds the path flow to the total flow
+            maxFlow += pathFlow
+
+            # Residual graph building -> Update the graph residual capacities in each edge and reverse edges along the valid path
+            t = self.sink
+            while(t != self.source):
+                s = self.parent[t] # s gets the previous vertice of the actual path
+                self.graph[s][t] -= pathFlow # Reduce the pathFlow of the edge
+                self.graph[t][s] += pathFlow # Add the pathFlow to the inverse edge
+                self.flowGraph[s][t] -= pathFlow
+                path = self.addActualFlow(s, t, pathFlow, path) # Adds the actual flow to the self.actualFlow vector and gets the actual path
+                t = self.parent[t] # t gets the previous vertice of the actual path (same as actual s)
+
+            self.printsOutput(output, path)
+
+
+        output.write("%d\n" %maxFlow)
+        self.printsSTCut(output)
+
+    def printsOutput(self, output, path):
+        for item in path:
+            output.write("%d "%item)
+        output.write("\n")
+
+        for item in self.capacity:
+            output.write("%d "%item)
+        output.write("\n")
+
+        for item in self.actualFlow:
+            output.write("%d "%item)
+        output.write("\n\n")
+
+    def addSTCut(self, actual, vertice):
+        for column in range(len(self.incidenceMatrix[0])):
+            if abs(self.incidenceMatrix[actual][column]) == 1 and abs(self.incidenceMatrix[vertice][column] == 1): # If it is -1 or 1
+                self.stCut[column] = 1
+
+    def printsSTCut(self, output):
+        originalGraph = self.incidenceMatrixToGraph() # Gets original graph
+        actual = self.source # Starts searching in the source vertice
+        for vertice in range(len(originalGraph[actual])): # Do a DFS for each valid edge in the originalGraph
+            if originalGraph[actual][vertice] > 0: # If the original capacity is > 0
+                if self.flowGraph[actual][vertice] == 0: # And the final residual capacity is 0
+                    self.addSTCut(actual, vertice) # Adds the edge to the self.stCut vector
+                    actual = self.source # Reset the DFS to the source vertice
+                else: # If the final residual capacity is > 0
+                    actual = vertice # Do the DFS search on the next vertice
+
+        for item in self.stCut:
+            output.write("%d "%item)
+        output.write("\n\n")
 
 
 input = open(sys.argv[1], "r")
 output = open(sys.argv[2], "w")
 
-vertex, pipes, cost, graph = reader.readInput(input)
+vertex, edges, capacity, incidenceMatrix = reader.readInput(input)
 
-fordFulkerson = Ford(graph)
+fordFulkerson = Ford(capacity, incidenceMatrix)
+
+fordFulkerson.FordFulkerson(output)
+
+input.close()
+output.close()
