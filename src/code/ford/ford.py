@@ -119,21 +119,21 @@ class Ford:
             self.printsOutput(output, path)
 
 
-        output.write("%d\n" %maxFlow)
+        output.write("%d\n\n" %maxFlow)
         self.printsSTCut(output)
 
     def printsOutput(self, output, path):
         for item in path:
             output.write("%d "%item)
-        output.write("\n")
+        output.write("\n\n")
 
         for item in self.capacity:
             output.write("%d "%item)
-        output.write("\n")
+        output.write("\n\n")
 
         for item in self.actualFlow:
             output.write("%d "%item)
-        output.write("\n\n")
+        output.write("\n\n\n")
 
     def addSTCut(self, actual, vertice):
         for column in range(len(self.incidenceMatrix[0])):
@@ -153,7 +153,6 @@ class Ford:
 
         for item in self.stCut:
             output.write("%d "%item)
-        output.write("\n\n")
 
 
 input = open(sys.argv[1], "r")

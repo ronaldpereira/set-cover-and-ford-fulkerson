@@ -44,28 +44,22 @@ void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
 {
     int i;
 
-    fprintf(output, "X = (");
-    for(i = 0; i < numVertex; i++)
-    {
-        fprintf(output, "%.3lf", x[i]);
-        if(i < numVertex-1)
-            fprintf(output, " ");
-        else
-            fprintf(output, ")");
-    }
-
-    fprintf(output, "\nY = (");
-
     for(i = 0; i < dimy; i++)
     {
         fprintf(output, "%d", y[i]);
         if(i < dimy-1)
             fprintf(output, " ");
-        else
-            fprintf(output, ")");
     }
 
-    fprintf(output, "\n\n");
+    fprintf(output, "\n");
+    for(i = 0; i < numVertex; i++)
+    {
+        fprintf(output, "%.3lf", x[i]);
+        if(i < numVertex-1)
+            fprintf(output, " ");
+    }
+
+    fprintf(output, "\n\n\n");
 }
 
 void printFinalWeight(FILE *output, int *y, double **m, int dimy)
@@ -79,7 +73,7 @@ void printFinalWeight(FILE *output, int *y, double **m, int dimy)
             sum += m[0][i];
     }
 
-    fprintf(output, "Cover Cost = %.3lf\n", sum);
+    fprintf(output, "%.3lf\n", sum);
 }
 
 int uncoveredCounter(bool *covered, int numVertex)
