@@ -14,7 +14,7 @@ void matrixAlocation(double ***m, int dimx, int dimy)
         (*m)[i] = (double*) calloc(dimy,sizeof(double*));
 }
 
-void inputReader(FILE *input, double ***m, int dimx, int dimy)
+void matrixReader(FILE *input, double ***m, int dimx, int dimy)
 {
     int i, j;
 
@@ -23,7 +23,7 @@ void inputReader(FILE *input, double ***m, int dimx, int dimy)
             fscanf(input, "%lf ", &((*m)[i][j]));
 }
 
-void matrixReader(char *location, double ***m, int *dimx, int *dimy)
+void inputReader(char *location, double ***m, int *dimx, int *dimy)
 {
     FILE *input;
 
@@ -35,7 +35,7 @@ void matrixReader(char *location, double ***m, int *dimx, int *dimy)
 
     matrixAlocation(m, *dimx, *dimy);
 
-    inputReader(input, m, *dimx, *dimy);
+    matrixReader(input, m, *dimx, *dimy);
 
     fclose(input);
 }
@@ -89,11 +89,9 @@ int uncoveredCounter(bool *covered, int numVertex)
 
     for(i = 0; i < numVertex; i++)
     {
-        printf("%d ", covered[i]);
         if(!(covered[i]))
             uncoveredCounter++;
     }
-    printf("\n");
 
     return uncoveredCounter;
 }
@@ -121,7 +119,7 @@ int getRandomVertex(bool *covered, int numVertex)
     return -1;
 }
 
-double getMaxValueOfVertex(double *x, double **m, int dimx, int indexVertex, int indexCover)
+double getMaxValueOfVertice(double *x, double **m, int dimx, int indexVertex, int indexCover)
 {
     int j;
     double sum = 0;
@@ -159,19 +157,20 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
 {
     int j;
     double minVertexWeight = INT_MAX;
-    int indexCover;
+    int indexCover, maxValueOfVertice;
 
     for(j = 0; j < dimy; j++)
     {
         if(m[indexVertex+1][j] == 1)
         {
-            if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) < minVertexWeight)
+            maxValueOfVertice = getMaxValueOfVertice(*x, m, dimx, indexVertex, j);
+            if(maxValueOfVertice < minVertexWeight)
             {
-                minVertexWeight = getMaxValueOfVertex(*x, m, dimx, indexVertex, j);
+                minVertexWeight = maxValueOfVertice;
                 indexCover = j;
             }
 
-            else if(getMaxValueOfVertex(*x, m, dimx, indexVertex, j) == minVertexWeight)
+            else if(maxValueOfVertice == minVertexWeight)
                 indexCover = getMajorCover(m, dimx, indexCover, j);
         }
     }
@@ -220,7 +219,7 @@ int main(int argc, char *argv[])
     double **m;
     int dimx, dimy;
 
-    matrixReader(argv[1], &m, &dimx, &dimy);
+    inputReader(argv[1], &m, &dimx, &dimy);
 
     setCover(argv[2], &m, dimx, dimy);
 
