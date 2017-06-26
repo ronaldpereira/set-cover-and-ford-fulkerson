@@ -1,7 +1,7 @@
 all:
-	python3 fordfulkerson.py ../../tests/testford/flow1.txt ../../tests/testford/outputflow1.txt
-	python3 fordfulkerson.py ../../tests/testford/flow2.txt ../../tests/testford/outputflow2.txt
-	python3 fordfulkerson.py ../../tests/testford/flow3.txt ../../tests/testford/outputflow3.txt
-	python3 fordfulkerson.py ../../tests/testford/flow4.txt ../../tests/testford/outputflow4.txt
-	python3 fordfulkerson.py ../../tests/testford/flow5.txt ../../tests/testford/outputflow5.txt
-	python3 fordfulkerson.py ../../tests/testford/input.txt ../../tests/testford/output.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/flow1.txt ../../tests/testfordfulkerson/outputflow1.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/flow2.txt ../../tests/testfordfulkerson/outputflow2.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/flow3.txt ../../tests/testfordfulkerson/outputflow3.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/flow4.txt ../../tests/testfordfulkerson/outputflow4.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/flow5.txt ../../tests/testfordfulkerson/outputflow5.txt
+	python3 fordfulkerson.py ../../tests/testfordfulkerson/input.txt ../../tests/testfordfulkerson/output.txt
