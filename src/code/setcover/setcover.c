@@ -113,20 +113,6 @@ int getRandomVertex(bool *covered, int numVertex)
     return -1;
 }
 
-double getMaxValueOfVertice(double *x, double **m, int dimx, int indexVertex, int indexCover)
-{
-    int j;
-    double sum = 0;
-
-    for(j = 0; j < dimx; j++)
-    {
-        if(m[indexVertex+1][j] == 1)
-            sum += x[j];
-    }
-
-    return (m[0][indexCover] - sum);
-}
-
 int getMajorCover(double **m, int dimx, int indexCover1, int indexCover2)
 {
     int i;
@@ -151,20 +137,21 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
 {
     int j;
     double minVertexWeight = INT_MAX;
-    int indexCover, maxValueOfVertice;
+    int indexCover, possibleMinValueOfVertice;
 
     for(j = 0; j < dimy; j++)
     {
         if(m[indexVertex+1][j] == 1)
         {
-            maxValueOfVertice = getMaxValueOfVertice(*x, m, dimx, indexVertex, j);
-            if(maxValueOfVertice < minVertexWeight && maxValueOfVertice > 0)
+            possibleMinValueOfVertice = m[0][j];
+
+            if(possibleMinValueOfVertice < minVertexWeight)
             {
-                minVertexWeight = maxValueOfVertice;
+                minVertexWeight = possibleMinValueOfVertice;
                 indexCover = j;
             }
 
-            else if(maxValueOfVertice == minVertexWeight)
+            else if(possibleMinValueOfVertice == minVertexWeight)
                 indexCover = getMajorCover(m, dimx, indexCover, j);
         }
     }
