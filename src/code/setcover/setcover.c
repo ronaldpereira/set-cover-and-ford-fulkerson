@@ -137,21 +137,21 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
 {
     int j;
     double minVertexWeight = INT_MAX;
-    int indexCover, possibleMinValueOfVertice;
+    int indexCover, actualSubsetValue;
 
     for(j = 0; j < dimy; j++)
     {
         if(m[indexVertex+1][j] == 1)
         {
-            possibleMinValueOfVertice = m[0][j];
+            actualSubsetValue = m[0][j]; // This value will be always equal to the minimum subset value
 
-            if(possibleMinValueOfVertice < minVertexWeight)
+            if(actualSubsetValue < minVertexWeight)
             {
-                minVertexWeight = possibleMinValueOfVertice;
+                minVertexWeight = actualSubsetValue;
                 indexCover = j;
             }
 
-            else if(possibleMinValueOfVertice == minVertexWeight)
+            else if(actualSubsetValue == minVertexWeight)
                 indexCover = getMajorCover(m, dimx, indexCover, j);
         }
     }
