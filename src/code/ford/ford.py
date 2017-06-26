@@ -41,6 +41,7 @@ class Ford:
         self.source = 0 # The source will be always the first vertice
         self.sink = self.dimx-1 # The sink will be always the last vertice
         self.parent = [0] * self.dimx # Stores the parents of the actual vertice (auxiliar to DFS)
+        self.visited = [False] * len(self.incidenceMatrix[0]) # Stores the visited vertex (auxiliar to DFS)
         self.actualFlow = [0] * len(self.incidenceMatrix[0]) # Stores the actual flow of the edges
         self.stCut = [0] * len(self.incidenceMatrix[0]) # Stores the minimum st-cut
 
@@ -65,10 +66,10 @@ class Ford:
         return path
 
     def depthFirstSearch(self): # Do a DFS search in the actual flow graph
-        visited = [False] * self.dimx # All vertices is not visited
+        self.visited = [False] * self.dimx # All vertices is not visited
         dfsStack = [] # Create a stack for DFS
 
-        visited[self.source] = True # Mark the source as visited
+        self.visited[self.source] = True # Mark the source as visited
         dfsStack.append(self.source) # Insert the source into the dfsStack
 
         while dfsStack: # While the dfsStack isn't empty
@@ -76,13 +77,13 @@ class Ford:
 
             # Get all adjacent vertices of the actualVertice
             for index, value in enumerate(self.graph[actualVertice]):
-                if visited[index] == False and value > 0: # If an adjacent vertice has not been visited yet, mark it visited and append it to the dfsStack. Then, add the adjacent vertex to the parent list
-                    visited[index] = True
+                if self.visited[index] == False and value > 0: # If an adjacent vertice has not been visited yet, mark it visited and append it to the dfsStack. Then, add the adjacent vertex to the parent list
+                    self.visited[index] = True
                     dfsStack.append(index)
                     self.parent[index] = actualVertice
 
         # If we got to the sink vertice, starting from the source
-        if visited[self.sink]:
+        if self.visited[self.sink]:
             return True # Path is valid
         else:
             return False # Path is not valid
@@ -116,9 +117,8 @@ class Ford:
 
             self.printsOutput(output, path)
 
-
         output.write("%d\n\n" %maxFlow)
-        self.printsSTCut(output)
+        self.findSTCut(output)
 
     def printsOutput(self, output, path):
         for item in path:
@@ -159,6 +159,30 @@ class Ford:
                     actual = vertice # The actual vertice gets the vertice it goes
                     vertice = -1 # Resets the vertice counter
             vertice+=1 # Go to the next possible vertice
+
+        for item in self.stCut:
+            output.write("%d "%item)
+
+    def findSourceAndTargetVertex(self, column):
+        for line in range(len(self.incidenceMatrix)):
+            if abs(self.incidenceMatrix[line][column]) == 1:
+                sourceVertice = line
+                self.incidenceMatrix[line][column] = 0
+                break
+
+        for line in range(len(self.incidenceMatrix)):
+            if abs(self.incidenceMatrix[line][column]) == 1:
+                targetVertice = line
+                self.incidenceMatrix[line][column] = 0
+                break
+
+        return sourceVertice, targetVertice
+
+    def findSTCut(self, output):
+        for column in range(len(self.incidenceMatrix[0])): # Search the edge in the incidenceMatrix
+            source, target = self.findSourceAndTargetVertex(column)
+            if self.visited[source] == True and self.visited[target] == False:
+                self.stCut[column] = 1
 
         for item in self.stCut:
             output.write("%d "%item)
