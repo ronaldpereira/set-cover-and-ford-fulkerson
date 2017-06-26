@@ -165,13 +165,13 @@ class Ford:
 
     def findSourceAndTargetVertex(self, column):
         for line in range(len(self.incidenceMatrix)): # For each line in the incidenceMatrix column
-            if abs(self.incidenceMatrix[line][column]) == 1: # We find which vertice is the first one
+            if self.incidenceMatrix[line][column] == -1: # We find which vertice is the first one
                 sourceVertice = line # Save the vertice
                 self.incidenceMatrix[line][column] = 0 # Set the vertice to 0 (just a markup)
                 break
 
         for line in range(len(self.incidenceMatrix)):# For each line in the incidenceMatrix column
-            if abs(self.incidenceMatrix[line][column]) == 1:# We find which vertice is the second one
+            if self.incidenceMatrix[line][column] == 1:# We find which vertice is the second one
                 targetVertice = line # Save the vertice
                 self.incidenceMatrix[line][column] = 0 # Set the vertice to 0 (just a markup)
                 break

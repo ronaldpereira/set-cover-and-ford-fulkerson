@@ -158,7 +158,7 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
         if(m[indexVertex+1][j] == 1)
         {
             maxValueOfVertice = getMaxValueOfVertice(*x, m, dimx, indexVertex, j);
-            if(maxValueOfVertice < minVertexWeight)
+            if(maxValueOfVertice < minVertexWeight && maxValueOfVertice > 0)
             {
                 minVertexWeight = maxValueOfVertice;
                 indexCover = j;
