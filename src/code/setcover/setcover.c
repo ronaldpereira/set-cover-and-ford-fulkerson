@@ -5,7 +5,7 @@
 #include <limits.h>
 #include <time.h>
 
-void matrixAlocation(double ***m, int dimx, int dimy)
+void matrixAlocation(double ***m, int dimx, int dimy) // Allocate the matrix
 {
     int i;
 
@@ -14,7 +14,7 @@ void matrixAlocation(double ***m, int dimx, int dimy)
         (*m)[i] = (double*) calloc(dimy,sizeof(double*));
 }
 
-void matrixReader(FILE *input, double ***m, int dimx, int dimy)
+void matrixReader(FILE *input, double ***m, int dimx, int dimy) // Matrix input reader
 {
     int i, j;
 
@@ -23,7 +23,7 @@ void matrixReader(FILE *input, double ***m, int dimx, int dimy)
             fscanf(input, "%lf ", &((*m)[i][j]));
 }
 
-void inputReader(char *location, double ***m, int *dimx, int *dimy)
+void inputReader(char *location, double ***m, int *dimx, int *dimy) // Entire input reader
 {
     FILE *input;
 
@@ -40,7 +40,7 @@ void inputReader(char *location, double ***m, int *dimx, int *dimy)
     fclose(input);
 }
 
-void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
+void printResults(FILE *output, double *x, int *y, int numVertex, int dimy) // Result printer
 {
     int i;
 
@@ -62,7 +62,7 @@ void printResults(FILE *output, double *x, int *y, int numVertex, int dimy)
     fprintf(output, "\n\n\n");
 }
 
-void printFinalWeight(FILE *output, int *y, double **m, int dimy)
+void printFinalWeight(FILE *output, int *y, double **m, int dimy) // Final weight printer
 {
     int i;
     double sum = 0;
@@ -76,7 +76,7 @@ void printFinalWeight(FILE *output, int *y, double **m, int dimy)
     fprintf(output, "%.3lf\n", sum);
 }
 
-int uncoveredCounter(bool *covered, int numVertex)
+int uncoveredCounter(bool *covered, int numVertex) // Counts how many vertex are uncovered
 {
     int i;
     int uncoveredCounter = 0;
@@ -90,7 +90,7 @@ int uncoveredCounter(bool *covered, int numVertex)
     return uncoveredCounter;
 }
 
-int getRandomVertex(bool *covered, int numVertex)
+int getRandomVertex(bool *covered, int numVertex) // Gets a random uncovered vertice
 {
     int i;
     int uncovered = uncoveredCounter(covered, numVertex);
@@ -113,7 +113,7 @@ int getRandomVertex(bool *covered, int numVertex)
     return -1;
 }
 
-int getMajorCover(double **m, int dimx, int indexCover1, int indexCover2)
+int getMajorCover(double **m, int dimx, int indexCover1, int indexCover2) // Gets the major cover between two equal cost cover
 {
     int i;
     int count1 = 0, count2 = 0;
@@ -133,7 +133,7 @@ int getMajorCover(double **m, int dimx, int indexCover1, int indexCover2)
     return (count1 > count2 ? indexCover1 : indexCover2);
 }
 
-void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, int dimy, int indexVertex)
+void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, int dimy, int indexVertex) // Maximize the index of a uncovered vertice
 {
     int j;
     double minVertexWeight = INT_MAX;
@@ -167,7 +167,7 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
     }
 }
 
-void setCover(char *outputFilePath, double ***m, int dimx, int dimy)
+void setCover(char *outputFilePath, double ***m, int dimx, int dimy) // Set-cover algorithm control function
 {
     FILE *output;
     bool *covered;
