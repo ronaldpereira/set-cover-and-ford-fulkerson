@@ -164,25 +164,25 @@ class Ford:
             output.write("%d "%item)
 
     def findSourceAndTargetVertex(self, column):
-        for line in range(len(self.incidenceMatrix)):
-            if abs(self.incidenceMatrix[line][column]) == 1:
-                sourceVertice = line
-                self.incidenceMatrix[line][column] = 0
+        for line in range(len(self.incidenceMatrix)): # For each line in the incidenceMatrix column
+            if abs(self.incidenceMatrix[line][column]) == 1: # We find which vertice is the first one
+                sourceVertice = line # Save the vertice
+                self.incidenceMatrix[line][column] = 0 # Set the vertice to 0 (just a markup)
                 break
 
-        for line in range(len(self.incidenceMatrix)):
-            if abs(self.incidenceMatrix[line][column]) == 1:
-                targetVertice = line
-                self.incidenceMatrix[line][column] = 0
+        for line in range(len(self.incidenceMatrix)):# For each line in the incidenceMatrix column
+            if abs(self.incidenceMatrix[line][column]) == 1:# We find which vertice is the second one
+                targetVertice = line # Save the vertice
+                self.incidenceMatrix[line][column] = 0 # Set the vertice to 0 (just a markup)
                 break
 
-        return sourceVertice, targetVertice
+        return sourceVertice, targetVertice # Returns the first and second vertex
 
     def findSTCut(self, output):
         for column in range(len(self.incidenceMatrix[0])): # Search the edge in the incidenceMatrix
-            source, target = self.findSourceAndTargetVertex(column)
-            if self.visited[source] == True and self.visited[target] == False:
-                self.stCut[column] = 1
+            source, target = self.findSourceAndTargetVertex(column) # Gets the source and target vertex of that column in the incidenceMatrix
+            if self.visited[source] == True and self.visited[target] == False: # If the source vertice is reachable from S and the target isn't
+                self.stCut[column] = 1 # Then the edge between these two is a st-cut
 
         for item in self.stCut:
             output.write("%d "%item)

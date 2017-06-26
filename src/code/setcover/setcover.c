@@ -171,6 +171,7 @@ void maximizeIndex(bool **covered, double **x, int **y, double **m, int dimx, in
 
     (*x)[indexVertex] = minVertexWeight;
     (*y)[indexCover] = 1;
+    (*covered)[indexVertex] = true;
 
     for(j = 1; j < dimx; j++)
     {
@@ -196,7 +197,6 @@ void setCover(char *outputFilePath, double ***m, int dimx, int dimy)
     while(uncoveredCounter(covered, numVertex) > 0)
     {
         indexVertex = getRandomVertex(covered, numVertex);
-        covered[indexVertex] = true;
 
         maximizeIndex(&covered, &x, &y, *m, dimx, dimy, indexVertex);
 
